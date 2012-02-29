@@ -1,3 +1,13 @@
+'''
+This haxx0red app scrapes a given folder in google docs and builds a txt file suitable for feeding into a word cloud generator like:
+* http://tagul.com/api
+* http://www.wordle.net
+* www.tagxedo.com/app.html
+v 1.?
+a Yuletide #cfaPHL production
+requires a running redis instance
+'''
+
 import gdata.docs.data
 import gdata.docs.client
 import gdata.auth
@@ -31,7 +41,14 @@ else:
   except:
     exit('Error logging in')
 
-def ProcessFeed(feed):
+def get_folder_feed():
+  feed = client.GetResources('https://docs.google.com/feeds/default/private/full/-/folder?showroot=true') #show all folders
+  for (i, entry) in enumerate(feed.entry):
+    print str(i) + ': ' + entry.title.text # i really should learn python string substitutions... later
+  folder_index = raw_input('enter index of folder to scrape: ')
+  return feed.entry[int(folder_index)].content.src
+
+def process_feed(feed):
   feed = client.GetResources(feed)
   print '\n'
   if not feed.entry:
@@ -64,7 +81,7 @@ def strip_tags(html):
     # s.feed(html)
     # return s.get_data()
 
-def ScrapeFiles():
+def scrape_files():
   
   for filename in r.smembers("filenames"):
     if filename not in r.smembers("scraped_files"):
@@ -81,6 +98,6 @@ def ScrapeFiles():
   output_file.close()
 
 
-ProcessFeed('https://docs.google.com/feeds/default/private/full/folder%3A0B_k36WQYssQgYzU2NTcwNDYtZWZmOC00NTY2LWI2MzAtNTEwZDE0ZmJkNTVj/contents') # the feed url for the folder of gdocs you want to process
-ScrapeFiles()
+process_feed(get_folder_feed())#'https://docs.google.com/feeds/default/private/full/folder%3A0B_k36WQYssQgYzU2NTcwNDYtZWZmOC00NTY2LWI2MzAtNTEwZDE0ZmJkNTVj/contents') # the feed url for the folder of gdocs you want to process
+scrape_files()
 
