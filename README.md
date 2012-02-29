@@ -1,6 +1,6 @@
 # SUPER AWESOME DOCSRAPR CLOUD MACHINE#
 
-### a [@Yuletide](http://twitter.com/yuletide) #cfaPHL production
+####a [@Yuletide](http://twitter.com/yuletide) #cfaPHL production
 
 v0.0001a
 
@@ -11,6 +11,18 @@ This simple command-line tool scrapes a given folder in google docs and builds a
 - http://www.wordle.net (pdf output)
 - http://tagul.com/api
 
-requires a running redis instance
+### Requirements:
 
+- A running [redis](http://redis.io/) instance (uses default connection parameters and non-namespaced keys!)
+- redis-py
+- gdata-py
+- lxml
+
+#### To install all requirements (after installing redis)
+
+	sudo pip install redis
+	sudo pip install gdata
+	sudo pip install lxml
+
+### Output:
 output is a file called output.txt in the "files" folder
