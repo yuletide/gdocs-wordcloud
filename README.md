@@ -1,6 +1,6 @@
 a [@Yuletide](http://twitter.com/yuletide) #cfaPHL production
 
-v1.0b?
+v1.0a
 
 
 This simple command-line tool scrapes a given folder in google docs and builds a txt file suitable for feeding into a word cloud generator like:
@@ -10,3 +10,5 @@ This simple command-line tool scrapes a given folder in google docs and builds a
 - http://tagul.com/api
 
 requires a running redis instance
+
+output is a file called output.txt in the "files" folder
