@@ -105,6 +105,6 @@ if feed != r.get('feed'): # new feed
   r.delete('scraped_text')
   r.delete('scraped_files')
   r.set('feed', feed)
-process_feed(feed)#'https://docs.google.com/feeds/default/private/full/folder%3A0B_k36WQYssQgYzU2NTcwNDYtZWZmOC00NTY2LWI2MzAtNTEwZDE0ZmJkNTVj/contents') # the feed url for the folder of gdocs you want to process  
+process_feed(feed)
 scrape_files()
 
