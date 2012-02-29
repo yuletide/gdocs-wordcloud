@@ -27,17 +27,17 @@ files = os.getcwd()+'/files/'
 if not os.path.exists(files):
     os.makedirs(files)
 
-if r.get('token'):
-  client.auth_token = gdata.gauth.ClientLoginToken(r.get('token')) # https://code.google.com/apis/gdata/docs/auth/clientlogin.html#RecallAuthToken
-  print 'token found: ' + r.get('token')
+if r.get('gdocs-wordcloud:token'):
+  client.auth_token = gdata.gauth.ClientLoginToken(r.get('gdocs-wordcloud:token')) # https://code.google.com/apis/gdata/docs/auth/clientlogin.html#RecallAuthToken
+  print 'token found: ' + r.get('gdocs-wordcloud:token')
 else:
   print 'no token'
   user = raw_input('User: ')
   pwd = raw_input('Pass: ')
   try:
     client.ClientLogin(user, pwd, client.source)
-    r.set('token', client.auth_token.token_string)
-    print 'token' + str(r.get('token'))
+    r.set('gdocs-wordcloud:token', client.auth_token.token_string)
+    print 'token' + str(r.get('gdocs-wordcloud:token'))
   except:
     exit('Error logging in')
 
@@ -58,7 +58,7 @@ def process_feed(feed):
       print entry.title.text
       filename = files + entry.id.text.split('/')[5] + '.html'
       print filename
-      if r.sadd('filenames', filename):
+      if r.sadd('gdocs-wordcloud:filenames', filename):
         client.download_resource(entry, filename) # is this synchronous?
 
 # http://stackoverflow.com/questions/753052/strip-html-from-strings-in-python
@@ -83,28 +83,28 @@ def strip_tags(html):
 
 def scrape_files():
   output_string = ''
-  for filename in r.smembers("filenames"):
-    if filename not in r.smembers("scraped_files"):
+  for filename in r.smembers('gdocs-wordcloud:filenames'):
+    if filename not in r.smembers('gdocs-wordcloud:scraped_files'):
       print 'scraping ' + filename
       f = open(filename, 'r')
       text = strip_tags(f.read())
       
-      r.sadd('scraped_text', text)
-      r.sadd('scraped_files', filename)
+      r.sadd('gdocs-wordcloud:scraped_text', text)
+      r.sadd('gdocs-wordcloud:scraped_files', filename)
       f.close()
   
-  for string in r.smembers("scraped_text"): output_string += string
+  for string in r.smembers('gdocs-wordcloud:scraped_text'): output_string += string
   print output_string
   output_file = open(files + 'output.txt', 'w') # overwrite any existing file
   output_file.write(output_string)
   output_file.close()
 
 feed = get_folder_feed()
-if feed != r.get('feed'): # new feed
-  r.delete('filenames')
-  r.delete('scraped_text')
-  r.delete('scraped_files')
-  r.set('feed', feed)
+if feed != r.get('gdocs-wordcloud:feed'): # new feed
+  r.delete('gdocs-wordcloud:filenames')
+  r.delete('gdocs-wordcloud:scraped_text')
+  r.delete('gdocs-wordcloud:scraped_files')
+  r.set('gdocs-wordcloud:feed', feed)
 process_feed(feed)
 scrape_files()
 
