@@ -58,7 +58,7 @@ def process_feed(feed):
       print entry.title.text
       filename = files + entry.id.text.split('/')[5] + '.html'
       print filename
-      if r.sadd("filenames", filename):
+      if r.sadd('filenames', filename):
         client.download_resource(entry, filename) # is this synchronous?
 
 # http://stackoverflow.com/questions/753052/strip-html-from-strings-in-python
@@ -82,22 +82,29 @@ def strip_tags(html):
     # return s.get_data()
 
 def scrape_files():
-  
+  output_string = ''
   for filename in r.smembers("filenames"):
     if filename not in r.smembers("scraped_files"):
       print 'scraping ' + filename
       f = open(filename, 'r')
       text = strip_tags(f.read())
       
-      r.sadd("scraped_text", text)
-      r.sadd("scraped_files", filename)
+      r.sadd('scraped_text', text)
+      r.sadd('scraped_files', filename)
       f.close()
   
-  output_file = open(files + 'output.txt', 'a')
-  for string in r.smembers("scraped_text"): output_file.write(string)
+  for string in r.smembers("scraped_text"): output_string += string
+  print output_string
+  output_file = open(files + 'output.txt', 'w') # overwrite any existing file
+  output_file.write(output_string)
   output_file.close()
 
-
-process_feed(get_folder_feed())#'https://docs.google.com/feeds/default/private/full/folder%3A0B_k36WQYssQgYzU2NTcwNDYtZWZmOC00NTY2LWI2MzAtNTEwZDE0ZmJkNTVj/contents') # the feed url for the folder of gdocs you want to process
+feed = get_folder_feed()
+if feed != r.get('feed'): # new feed
+  r.delete('filenames')
+  r.delete('scraped_text')
+  r.delete('scraped_files')
+  r.set('feed', feed)
+process_feed(feed)#'https://docs.google.com/feeds/default/private/full/folder%3A0B_k36WQYssQgYzU2NTcwNDYtZWZmOC00NTY2LWI2MzAtNTEwZDE0ZmJkNTVj/contents') # the feed url for the folder of gdocs you want to process  
 scrape_files()
 
