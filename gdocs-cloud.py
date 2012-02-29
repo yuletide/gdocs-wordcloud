@@ -81,6 +81,6 @@ def ScrapeFiles():
   output_file.close()
 
 
-ProcessFeed('https://docs.google.com/feeds/default/private/full/folder%3A0B_k36WQYssQgYzU2NTcwNDYtZWZmOC00NTY2LWI2MzAtNTEwZDE0ZmJkNTVj/contents')
+ProcessFeed('https://docs.google.com/feeds/default/private/full/folder%3A0B_k36WQYssQgYzU2NTcwNDYtZWZmOC00NTY2LWI2MzAtNTEwZDE0ZmJkNTVj/contents') # the feed url for the folder of gdocs you want to process
 ScrapeFiles()
 
