@@ -30,19 +30,31 @@ else:
   except:
     exit('Error logging in')
 
-def PrintFeed(feed):
+def ProcessFeed(feed):
   feed = client.GetResources(feed)
   print '\n'
   if not feed.entry:
     print 'No entries in feed.\n'
   for entry in feed.entry:
-    print entry.title.text
-    filename = files + '/' + entry.id.text.split('/')[5] + '.html'
-    print filename
-    r.sadd("filenames", filename)
-    client.download_resource(entry, filename)
+    if entry.get_resource_type() == 'document':
+      print entry.title.text
+      filename = files + entry.id.text.split('/')[5] + '.html'
+      print filename
+      if r.sadd("filenames", filename):
+        client.download_resource(entry, filename) # is this synchronous?
 
-PrintFeed('https://docs.google.com/feeds/default/private/full/folder%3A0B_k36WQYssQgYzU2NTcwNDYtZWZmOC00NTY2LWI2MzAtNTEwZDE0ZmJkNTVj/contents')
+def ScrapeFiles():
+  for filename in r.smembers("filenames"):
+    if filename not in r.smembers("scraped_files"):
+      try:
+        f = open(filename, 'r').read()
+        r.sadd("scraped_text", f)
+        r.sadd("scraped_files", filename)
+        f.close()
+      except:
+        print 'error scraping file: '+filename
+  print r.smembers("scraped_files")
+  print r.smembers("scraped_text")
 
-
-
+ProcessFeed('https://docs.google.com/feeds/default/private/full/folder%3A0B_k36WQYssQgYzU2NTcwNDYtZWZmOC00NTY2LWI2MzAtNTEwZDE0ZmJkNTVj/contents')
+ScrapeFiles()
