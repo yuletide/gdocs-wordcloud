@@ -1,4 +1,4 @@
-a [@Yuletide|http://twitter.com/yuletide] #cfaPHL production
+a [@Yuletide](http://twitter.com/yuletide) #cfaPHL production
 
 v1.0b?
 
