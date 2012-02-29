@@ -11,7 +11,7 @@ This simple command-line tool scrapes a given folder in google docs and builds a
 - http://tagul.com/api
 
 ## Usage:
-	$ python gdocs-cloud.py
+	$ python gdocs-wordcloud.py
 	User: <google docs username>
 	Pass: <google docs pass>
 	0: Technical Notes
@@ -22,7 +22,7 @@ This simple command-line tool scrapes a given folder in google docs and builds a
 
 ## Requirements:
 
-- A running [redis](http://redis.io/) instance (uses default connection parameters and non-namespaced keys!)
+- A running [redis](http://redis.io/) instance (uses default connection parameters)
 - [redis-py](https://github.com/andymccurdy/redis-py)
 - [gdata-python-client](https://code.google.com/p/gdata-python-client/)
 - [lxml](http://lxml.de)
