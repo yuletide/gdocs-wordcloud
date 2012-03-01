@@ -41,6 +41,16 @@ else:
   except:
     exit('Error logging in')
 
+feed = get_folder_feed()
+if feed != r.get('gdocs-wordcloud:feed'): # new feed
+  r.delete('gdocs-wordcloud:filenames')
+  r.delete('gdocs-wordcloud:scraped_text')
+  r.delete('gdocs-wordcloud:scraped_files')
+  r.set('gdocs-wordcloud:feed', feed)
+process_feed(feed)
+scrape_files()
+
+
 def get_folder_feed():
   feed = client.GetResources('https://docs.google.com/feeds/default/private/full/-/folder?showroot=true') #show all folders
   for (i, entry) in enumerate(feed.entry):
@@ -94,17 +104,9 @@ def scrape_files():
       f.close()
   
   for string in r.smembers('gdocs-wordcloud:scraped_text'): output_string += string
-  print output_string
   output_file = open(files + 'output.txt', 'w') # overwrite any existing file
   output_file.write(output_string)
   output_file.close()
+  print 'successfully wrote word cloud text to ' + files + 'output.txt'
 
-feed = get_folder_feed()
-if feed != r.get('gdocs-wordcloud:feed'): # new feed
-  r.delete('gdocs-wordcloud:filenames')
-  r.delete('gdocs-wordcloud:scraped_text')
-  r.delete('gdocs-wordcloud:scraped_files')
-  r.set('gdocs-wordcloud:feed', feed)
-process_feed(feed)
-scrape_files()
 
